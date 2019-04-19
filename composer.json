@@ -1,6 +1,6 @@
 {
-  "name": "opqnext/reflection-api-doc",
-  "description": "一个基于 Thinkphp5 的 api 文档自动生成工具",
+  "name": "psr4/reflection-api-doc",
+  "description": "一个基于 Thinkphp5.1 的 api 文档自动生成工具",
   "type": "library",
   "keywords": [
     "php",
@@ -9,8 +9,7 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "opqnext",
-      "email": "309622694@qq.com"
+      "name": "psr4"
     }
   ],
   "require": {
