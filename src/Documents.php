@@ -209,10 +209,10 @@ class Documents
                 $return = $val;
             }
             if ($key == '@route') {
-                if (preg_match('/[\'\"]([^\'\"]*)[\'\"](\s*\,\s*)?[\'\"]([^\'\"]*)[\'\"]/', $val, $re)) {
+                if (preg_match('/[\'\"]([^\'\"]*)[\'\"](\s*\,\s*)?([\'\"]([^\'\"]*)[\'\"])?/', $val, $re)) {
                     $route = [
                         'path' => isset($re[1]) ? $re[1] : $val,
-                        'method' => isset($re[3]) ? $re[3] : 'GET'
+                        'method' => isset($re[4]) ? $re[4] : 'get'
                     ];
                 }
             }
