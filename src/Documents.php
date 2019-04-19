@@ -7,9 +7,10 @@
 
 namespace Reflection\Api\Doc;
 
+
 use think\facade\Config;
 use think\facade\Request;
-use think\facade\View;
+use think\View;
 
 class Documents
 {
@@ -32,7 +33,7 @@ class Documents
     {
         $this->request = Request::instance();
         $this->template['view_path'] = __DIR__ . '/view/';
-        $this->view = View::instance($this->template, []);
+        $this->view = app('view');
         $this->config = Config::get('documents.');
     }
 
@@ -44,8 +45,8 @@ class Documents
     public function run()
     {
         $this->is_config();
-        $class = $this->config['class'];
         $result = $data = array();
+        $class = $this->config['class'];
         foreach ($class as $val) {
             $methods = $this->getMethods($val, 'public');
             foreach ($methods as $k => $v) {
@@ -59,16 +60,46 @@ class Documents
             $data['param'] = str_replace('\\', '-', $val);
             $data['method'] = $methods;
             $result[] = $data;
-
         }
+
         $this->view->assign('list', $result);
         $this->view->assign('title', $this->config['title']);
         $this->view->assign('description', $this->config['description']);
-        if (is_file($this->template['view_path'] . $this->config['template'] . '.html')) {
-            return $this->view->fetch($this->config['template']);
+        $template = $this->template['view_path'] . $this->config['template'] . '.html';
+        if (is_file($template)) {
+            return $this->view->fetch($template);
         } else {
             return $this->view->fetch('error');
         }
+    }
+
+    protected function buildDirRoute($path, $namespace, $module, $suffix, $layer)
+    {
+        $content = '';
+        $controllers = glob($path . '*.php');
+        $result = [];
+        foreach ($controllers as $controller) {
+            $data = [];
+            $controller = $namespace . '\\' . basename($controller, '.php');
+            $methods = $this->getMethods($controller, 'public');
+            foreach ($methods as $k => $v) {
+                $meth_v = $this->Item($controller, $v);
+                $meth_v['name'] = $v;
+
+                $methods[$k] = $meth_v;
+            }
+            $data['title'] = $this->Ctitle($controller);
+            $data['class'] = $controller;
+            $data['param'] = str_replace('\\', '-', $controller);
+            $data['method'] = $methods;
+            $result[] = $data;
+        }
+
+        $subDir = glob($path . '*', GLOB_ONLYDIR);
+        foreach ($subDir as $dir) {
+            $result = array_merge($result, $this->buildDirRoute($dir . DIRECTORY_SEPARATOR, $namespace . '\\' . basename($dir), $module, $suffix, $layer . '\\' . basename($dir)));
+        }
+        return $result;
     }
 
     private function is_config()
@@ -86,9 +117,10 @@ class Documents
         $item = $this->getData($res);
         return [
             'title' => isset($item['title']) && !empty($item['title']) ? $item['title'] : '未配置标题',
-            'desc' => isset($item['desc']) && !empty($item['desc']) ? $item['desc'] : '未配置描述信息',
+            'desc' => isset($item['desc']) && !empty($item['desc']) ? $item['desc'] : '',
             'params' => isset($item['params']) && !empty($item['params']) ? $item['params'] : [],
             'returns' => isset($item['returns']) && !empty($item['returns']) ? $item['returns'] : [],
+            'route' => isset($item['route']) && !empty($item['route']) ? $item['route'] : [],
         ];
     }
 
@@ -161,13 +193,14 @@ class Documents
     private function getData($res)
     {
         $title = $description = '';
-        $param = $params = $return = $returns = array();
+        $param = $params = $return = $returns = $route = array();
         foreach ($res as $key => $val) {
             if ($key == '@title') {
                 $title = $val;
             }
             if ($key == '@desc') {
-                $description = implode("<br>", (array)json_decode($val));
+                $description = json_decode($val);
+                $description = is_array($description) ? implode("<br>", $description) : $val;
             }
             if ($key == '@param') {
                 $param = $val;
@@ -175,9 +208,16 @@ class Documents
             if ($key == '@return') {
                 $return = $val;
             }
+            if ($key == '@route') {
+                if (preg_match('/[\'\"]([^\'\"]*)[\'\"](\s*\,\s*)?[\'\"]([^\'\"]*)[\'\"]/', $val, $re)) {
+                    $route = [
+                        'path' => isset($re[1]) ? $re[1] : $val,
+                        'method' => isset($re[3]) ? $re[3] : 'GET'
+                    ];
+                }
+            }
         }
         //过滤传入参数
-        var_dump($param);die();
         foreach ($param as $key => $rule) {
             $rule = (array)json_decode($rule);
             $name = $rule['name'];
@@ -200,16 +240,22 @@ class Documents
         //过滤返回参数
         foreach ($return as $item) {
             $item = (array)json_decode($item);
-            $type = $item['type'];
+            $type = isset($item['type']) ? $item['type'] : 'mixed';
             $name = "";
-            $required = $item['required'] ? '是' : '否';
-            $detail = $item['desc'];
-            for ($i = 1; $i < $item['level']; $i++) {
-                $name .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            $required = isset($item['required']) && $item['required'] ? '是' : '否';
+            $detail = isset($item['desc']) ? $item['desc'] : '';
+            if (isset($item['level'])) {
+                for ($i = 1; $i < $item['level']; $i++) {
+                    $name .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
             }
             $name .= $item['name'];
             $returns[] = array('name' => $name, 'type' => $type, 'required' => $required, 'detail' => $detail);
         }
-        return array('title' => $title, 'desc' => $description, 'params' => $params, 'returns' => $returns);
+        //过滤路由
+        foreach ($route as $k => $v) {
+
+        }
+        return array('title' => $title, 'desc' => $description, 'params' => $params, 'returns' => $returns, 'route' => $route);
     }
 }

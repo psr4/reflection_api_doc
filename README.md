@@ -1,17 +1,6 @@
-<p align="center">
-    <h1 align="center">reflection_api_doc</h1>
-</p>
+# reflection_api_doc
 
-这是一个基于 thinkphp5.0 的PHP自动生成api文档的库
-
-[![Latest Stable Version](https://poser.pugx.org/opqnext/reflection-api-doc/v/stable.svg)](https://packagist.org/packages/opqnext/reflection-api-doc) 
-[![Total Downloads](https://img.shields.io/packagist/dt/opqnext/reflection-api-doc.svg)](https://packagist.org/packages/opqnext/reflection-api-doc)
-[![Latest Unstable Version](https://poser.pugx.org/opqnext/reflection-api-doc/v/unstable.svg)](https://packagist.org/packages/opqnext/reflection-api-doc) 
-[![License](https://poser.pugx.org/opqnext/reflection-api-doc/license.svg)](https://packagist.org/packages/opqnext/reflection-api-doc)
-
-两种使用方式，1.composer安装使用。2.tp5独立安装使用。
-
-####  composer 方式安装
+将会是一个基于 thinkphp5 的PHP自动生成api文档的库
 
 1. 安装：
 
@@ -19,13 +8,13 @@
 
 直接执行:
 ```
-composer require "opqnext/reflection-api-doc:v1.0"
+composer require "opqnext/reflection-api-doc:v1.0_beta"
 ```
 
 或者修改composer.json文件
 ```
 // 在require里加上
-"opqnext/reflection-api-doc": "v1.0"
+"opqnext/reflection-api-doc": "v1.0_beta"
 
 // 可以在文件末加上这个几行 这是国内的镜像下载速度较快。
 // 据说每分钟同步，但是我觉得不是
@@ -84,8 +73,8 @@ composer require "opqnext/reflection-api-doc:v1.0"
 ```
 <?php
 return [
-    'title' => "thinkphp5接口自动生成文档",  
-    'description' => 'thinkphp5 | api接口文档等等。',
+    'title' => "北京想得美科技有限公司",  
+    'description' => '"想的美app" | APi接口文档等等。',
     'template' => 'apple', // 苹果绿:apple 葡萄紫:grape
     'class' => [
         'app\index\controller\Article'
@@ -97,7 +86,7 @@ return [
 
 **重点:** class 为将要生成文档的类(带命名空间)
 
-1. 示例：
+2. 示例：
 
 | 注释参数 | 含义 | 说明 |
 | - | - | - |
@@ -145,29 +134,7 @@ class Article extends Controller
 
 demo预览地址:http://beta.tp.opqnext.com:8086/api/documents
 
-注意: 项目中 extend 目录为独立安装使用包。如果你使用composer安装，并且觉得 extend 目录极其碍眼，可以将其删除，并不影响正常使用。\(^o^)/~
-
-####  tp5独立安装使用
-
-1. 安装
-
-直接下载或者拷贝目录extend下的reflection，放到项目的extend下。
-
-2. 使用方法
-
-同样的，在 application/extra 目录下创建文件名为 documents.php 的配置文件。文件内容如上所示。
-
-在 application 目录下的 common.php 文件中填加如下内容：
-```
-use think\Route;
-Route::get('doc','reflection\Documents@run');
-```
-
-编辑好配置文件之后 直接打开浏览器访问 http://localhost/doc 即可看到文档页。
-
-demo预览地址:http://beta.tp.opqnext.com:8086/doc
-
-- 预览
+3. 预览
 
 长相一般的苹果绿：
 
@@ -178,18 +145,6 @@ demo预览地址:http://beta.tp.opqnext.com:8086/doc
 ![](https://image.opqnext.com/grape.jpg)
 
 ![](https://image.opqnext.com/grape_2.png)
-
-3. thinkphp5.1需要自行修改Documents类。
-```
-5 use think\facade\Config;
-6 use think\facade\Request;
-7 use think\facade\View;
-
-28 $this->view = View::init($this->template,[])
-
-//然后调试一下路径^_^
-
-```
 
 4. 支持
 

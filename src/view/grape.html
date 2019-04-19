@@ -78,8 +78,11 @@
                 <p class="lead"><code>{$vol.class}</code></p>
                 {foreach name="$vol.method" item="vo" key="k"}
                 <h3 id="#{$key}-{$k}-{$vo.name}">{$k+1}. {$vo.title}</h3>
-                <p>方法名: <code>{$vo.name}()</code></p>
                 <div class="bs-callout bs-callout-info">
+                    <p>方法名: <code>{$vo.name}()</code></p>
+                    {if condition="isset($vo['route']['path'])"}
+                    <p>路由: <code>{$vo.route.path}({$vo.route.method|default=""})</code></p>
+                    {/if}
                     <p>{$vo.desc}</p>
                 </div>
 
@@ -99,9 +102,9 @@
                         <tbody>
                         {foreach name="$vo.params" item="v"}
                         <tr>
-                            <th scope="row">{$v.name}</th>
+                            <th scope="row">{$v.name|raw}</th>
                             <td class="text-success">{$v.type}</td>
-                            <td class="text-success">{$v.require}</td>
+                            <td class="text-success">{$v.require|raw}</td>
                             <td class="text-muted">{$v.default}</td>
                             <td class="text-muted">{$v.desc}</td>
                         </tr>
@@ -125,9 +128,9 @@
                         <tbody>
                         {foreach name="$vo.returns" item="v"}
                         <tr>
-                            <th scope="row">{$v.name}</th>
+                            <th scope="row">{$v.name|raw}</th>
                             <td class="text-success">{$v.type}</td>
-                            <td class="text-success">{$v.required}</td>
+                            <td class="text-success">{$v.required|raw}</td>
                             <td class="text-muted">{$v.detail}</td>
                         </tr>
                         {/foreach}

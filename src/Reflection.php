@@ -12,6 +12,7 @@ class Reflection
         "@throws" => "抛出的错误异常",
         "@title" => "标题",
         "@desc" => "描述",
+        "@route" => "路由",
     );
 
     public $typeMaps = array(
