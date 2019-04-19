@@ -1,84 +1,27 @@
 # reflection_api_doc
 
-将会是一个基于 thinkphp5 的PHP自动生成api文档的库
+将会是一个基于 thinkphp5.1 的PHP自动生成api文档的库
 
 1. 安装：
 
-安装有两种方法:
+>composer require "psr4/reflection-api-doc"
 
-直接执行:
-```
-composer require "opqnext/reflection-api-doc:v1.0_beta"
-```
 
-或者修改composer.json文件
-```
-// 在require里加上
-"opqnext/reflection-api-doc": "v1.0_beta"
-
-// 可以在文件末加上这个几行 这是国内的镜像下载速度较快。
-// 据说每分钟同步，但是我觉得不是
-"repositories": {
-    "packagist": {
-        "type": "composer",
-        "url": "https://packagist.phpcomposer.com"
-    }
-}
-```
-
-我的composer.json示例:
-```
-{
-    "name": "topthink/think",
-    "description": "the new thinkphp framework",
-    "type": "project",
-    "keywords": [
-        "framework",
-        "thinkphp",
-        "ORM"
-    ],
-    "homepage": "http://thinkphp.cn/",
-    "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "liu21st",
-            "email": "liu21st@gmail.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.4.0",
-        "topthink/framework": "^5.0",
-        "opqnext/reflection-api-doc": "v1.0_beta"
-    },
-    "extra": {
-        "think-path": "thinkphp"
-    },
-    "config": {
-        "preferred-install": "dist"
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.phpcomposer.com"
-        }
-    }
-}
-```
 2. 使用方法
 
-在 application/extra 目录下创建文件名为 documents.php 的配置文件。
+在 application/config 目录下创建文件名为 documents.php 的配置文件。
 
 配置文件内容如下：
 
 ```
 <?php
 return [
-    'title' => "北京想得美科技有限公司",  
-    'description' => '"想的美app" | APi接口文档等等。',
+    'title' => "thinkphp5接口自动生成文档",
+    'description' => 'api接口文档',
     'template' => 'apple', // 苹果绿:apple 葡萄紫:grape
     'class' => [
-        'app\index\controller\Article'
-        // ...
+        \app\api\controller\v1\Login::class,
+        \app\api\controller\v1\User::class
     ],
 ];
 ```
@@ -94,7 +37,7 @@ return [
 | @desc | 描述 | 格式如下，地址、请求方式、备注等 |
 | @param | 接收参数 | 格式如下，name:名称、type:类型、required:是否必须、default:默认值、desc:说明 |
 | @return | 返回参数 | 格式如下，name:名称、type:类型、required:是否必须、desc:说明、level：层级 |
-
+| @route | 注解路由 | tp5.1的注解路由 |
 类的具体实现方法：
 
 ```
@@ -124,6 +67,7 @@ class Article extends Controller
      * @return {"name":"tag","type":"string","required":true,"desc":"标签名称","level":3}
      * @return {"name":"count","type":"int","required":true,"desc":"标签使用数","level":3}
      * @return {"name":"img","type":"array","required":true,"desc":"文章组图","level":2}
+	 * @route('index', 'get')
      */
     public function index(){
         //... 具体实现方法
@@ -131,8 +75,6 @@ class Article extends Controller
 ```
 
 编辑好配置文件之后 直接打开浏览器访问 http://localhost/api/documents 即可看到文档页。
-
-demo预览地址:http://beta.tp.opqnext.com:8086/api/documents
 
 3. 预览
 
