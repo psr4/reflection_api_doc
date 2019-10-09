@@ -77,11 +77,11 @@
                 </button>
                 {$description}
             </div>
-            {foreach name="list" item="vol" key="key"}
-            <h1 id="section-{$key}">{$vol.title}</h1>
+            {foreach name="list" item="vol" key="k1"}
+            <h1 id="section-{$k1}">{$vol.title}</h1>
             <p class="lead"><code>{$vol.class}</code></p>
             {foreach name="$vol.method" item="vo" key="k"}
-            <h3 id="#{$key}-{$k}-{$vo.name}">{$k+1}. {$vo.title}</h3>
+            <h3 id="{$k1}-{$k}-{$vo.name}">{$k+1}. {$vo.title}</h3>
             <div class="panel panel-info">
                 <div class="panel-body">
                     <p>方法名: <code>{$vo.name}()</code></p>

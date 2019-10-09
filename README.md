@@ -18,7 +18,7 @@
 return [
     'title' => "thinkphp5接口自动生成文档",
     'description' => 'api接口文档',
-    'template' => 'apple', // 苹果绿:apple 葡萄紫:grape
+    'template' => 'grape', // 苹果绿:apple 葡萄紫:grape
     'class' => [
         \app\api\controller\v1\Login::class,
         \app\api\controller\v1\User::class

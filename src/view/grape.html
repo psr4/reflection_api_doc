@@ -73,11 +73,11 @@
 
 
             <div class="bs-docs-section">
-                {foreach name="list" item="vol" key="key"}
+                {foreach name="list" item="vol" key="k1"}
                 <h1 id="{$vol.param}" class="page-header">{$vol.title}</h1>
                 <p class="lead"><code>{$vol.class}</code></p>
                 {foreach name="$vol.method" item="vo" key="k"}
-                <h3 id="#{$key}-{$k}-{$vo.name}">{$k+1}. {$vo.title}</h3>
+                <h3 id="{$k1}-{$k}-{$vo.name}">{$vo.title}</h3>
                 <div class="bs-callout bs-callout-info">
                     <p>方法名: <code>{$vo.name}()</code></p>
                     {if condition="isset($vo['route']['path'])"}
