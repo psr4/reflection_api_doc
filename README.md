@@ -6,26 +6,11 @@
 
 >composer require "psr4/reflection-api-doc"
 
-
 2. 使用方法
 
-在 application/config 目录下创建文件名为 documents.php 的配置文件。
+>php think reflection:config
 
-配置文件内容如下：
-
-```
-<?php
-return [
-    'title' => "thinkphp5接口自动生成文档",
-    'description' => 'api接口文档',
-    'template' => 'grape', // 苹果绿:apple 葡萄紫:grape
-    'class' => [
-        \app\api\controller\v1\Login::class,
-        \app\api\controller\v1\User::class
-    ],
-];
-```
-其中 template 为模板类型，暂时提供两种模板风格，分别为苹果绿和葡萄紫，虽然两套模板都是巨丑无比。所以使用的过程中也可以自己开发模板。
+会在 application/config 目录下创建文件名为 documents.php 的配置文件。
 
 **重点:** class 为将要生成文档的类(带命名空间)
 
