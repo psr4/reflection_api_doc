@@ -10,6 +10,7 @@ namespace Reflection\Api\Doc;
 
 use think\facade\Config;
 use think\facade\Request;
+use think\helper\Str;
 use think\View;
 
 class Documents
@@ -192,15 +193,14 @@ class Documents
 
     private function getData($res)
     {
-        $title = $description = '';
-        $param = $params = $return = $returns = $route = array();
+        $title = '';
+        $description = $param = $params = $return = $returns = $route = array();
         foreach ($res as $key => $val) {
             if ($key == '@title') {
                 $title = $val;
             }
             if ($key == '@desc') {
-                $description = json_decode($val);
-                $description = is_array($description) ? implode("<br>", $description) : $val;
+                $description[] = $val;
             }
             if ($key == '@param') {
                 $param = $val;
@@ -219,43 +219,61 @@ class Documents
         }
         //过滤传入参数
         foreach ($param as $key => $rule) {
-            $rule = (array)json_decode($rule);
-            $name = $rule['name'];
-            if (!isset($rule['type'])) {
-                $rule['type'] = 'string';
+            $rule = $this->parseDoc($rule, true);
+            if ($item === false) {
+                continue;
             }
-            $type = isset($typeMaps[$rule['type']]) ? $typeMaps[$rule['type']] : $rule['type'];
-            $require = isset($rule['required']) && $rule['required'] ? '<font color="red">必须</font>' : '可选';
-            $default = isset($rule['default']) ? $rule['default'] : '';
-            if ($default === NULL) {
-                $default = 'NULL';
-            } else if (is_array($default)) {
-                $default = json_encode($default);
-            } else if (!is_string($default)) {
-                $default = var_export($default, true);
-            }
-            $desc = isset($rule['desc']) ? trim($rule['desc']) : '';
-            $params[] = array('name' => $name, 'type' => $type, 'require' => $require, 'default' => $default, 'desc' => $desc);
+            $params[] = $rule;
         }
         //过滤返回参数
         foreach ($return as $item) {
-            $item = (array)json_decode($item);
-            $type = isset($item['type']) ? $item['type'] : 'mixed';
-            $name = "";
-            $required = isset($item['required']) && $item['required'] ? '是' : '否';
-            $detail = isset($item['desc']) ? $item['desc'] : '';
-            if (isset($item['level'])) {
-                for ($i = 1; $i < $item['level']; $i++) {
-                    $name .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                }
+            $item = $this->parseDoc($item);
+            if ($item === false) {
+                continue;
             }
-            $name .= $item['name'];
-            $returns[] = array('name' => $name, 'type' => $type, 'required' => $required, 'detail' => $detail);
+            $returns[] = $item;
         }
         //过滤路由
         foreach ($route as $k => $v) {
 
         }
-        return array('title' => $title, 'desc' => $description, 'params' => $params, 'returns' => $returns, 'route' => $route);
+        return array('title' => $title, 'desc' => implode('<br>', $description), 'params' => $params, 'returns' => $returns, 'route' => $route);
+    }
+
+    protected function parseDoc($item, $isParam = false)
+    {
+        //数组扩大以防list出错
+        $items = array_merge(preg_split('/\s+/', $item), ['', '', '']);
+        //default 在return里面是没有的 预先定义
+        $default = '';
+        if ($isParam) {
+            // 把数组第三项后面的数据弹出
+            // 过滤尾部空字符串项 并合并成desc  (防止desc内有空格)
+            $desc = implode(' ', array_filter(array_splice($items, 3, count($items) - 3)));
+            list($type, $name, $default) = $items;
+        } else {
+            list($type, $name, $desc) = $items;
+        }
+
+        $result = [
+            'type' => $type,
+            'default' => $default,
+            'required' => '否',
+            'detail' => $desc
+        ];
+        if (Str::startsWith($name, '*')) {
+            $result['required'] = '<font color="red">是</font>';
+            $name = substr($name, 1);
+        }
+        $old_len = strlen($name);
+        $name = ltrim($name, '-');
+        $level = $old_len - strlen($name);
+        $name = implode('', array_fill(0, $level, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")) . $name;
+        if (!$name) {
+            return false;
+        }
+        $result['name'] = $name;
+        return $result;
+
     }
 }
