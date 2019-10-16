@@ -220,7 +220,7 @@ class Documents
         //过滤传入参数
         foreach ($param as $key => $rule) {
             $rule = $this->parseDoc($rule, true);
-            if ($item === false) {
+            if ($rule === false) {
                 continue;
             }
             $params[] = $rule;
@@ -258,6 +258,7 @@ class Documents
         $result = [
             'type' => $type,
             'default' => $default,
+            'required' => '否',
             'required' => '否',
             'detail' => $desc
         ];
