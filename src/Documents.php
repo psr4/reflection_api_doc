@@ -252,7 +252,8 @@ class Documents
             $desc = implode(' ', array_filter(array_splice($items, 3, count($items) - 3)));
             list($type, $name, $default) = $items;
         } else {
-            list($type, $name, $desc) = $items;
+            $desc = implode(' ', array_filter(array_splice($items, 2, count($items) - 2)));
+            list($type, $name) = $items;
         }
 
         $result = [
