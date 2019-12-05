@@ -64,8 +64,7 @@ class Documents
         }
 
         $this->view->assign('list', $result);
-        $this->view->assign('title', $this->config['title']);
-        $this->view->assign('description', $this->config['description']);
+        $this->view->assign($this->config);
         $template = $this->template['view_path'] . $this->config['template'] . '.html';
         if (is_file($template)) {
             return $this->view->fetch($template);

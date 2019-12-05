@@ -51,8 +51,7 @@ class Documents
             $result[] = $data;
         }
         $this->view->assign('list', $result);
-        $this->view->assign('title', $this->config['title']);
-        $this->view->assign('description', $this->config['description']);
+        $this->view->assign($this->config);
         if(is_file($this->template['view_path'].$this->config['template'].'.html')){
             return $this->view->fetch($this->config['template']);
         } else {

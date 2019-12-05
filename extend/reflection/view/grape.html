@@ -47,12 +47,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="../" class="navbar-brand">{$title}</a>
+            <a href="../" class="navbar-brand">{$title|raw}</a>
         </div>
         <nav id="bs-navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
-                <!-- <li><a href="http://mb.bootcss.com" onclick="_hmt.push(['_trackEvent', 'docv3-navbar', 'click', 'themes'])" target="_blank">主题/模板</a></li> -->
-                <li><a href="http://www.bootcss.com/" onclick="_hmt.push(['_trackEvent', 'docv3-navbar', 'click', 'V3导航-Bootstrap中文网'])" target="_blank">composer</a></li>
+                {volist name="links" id="vo"}
+                 <li><a href="{$vo}">{$key}</a></li>
+                {/volist}
+                <!--<li><a href="http://www.bootcss.com/" onclick="_hmt.push(['_trackEvent', 'docv3-navbar', 'click', 'V3导航-Bootstrap中文网'])" target="_blank">composer</a></li>-->
             </ul>
         </nav>
     </div>
@@ -62,7 +64,7 @@
 <!-- Docs page layout -->
 <div class="bs-docs-header" id="content" tabindex="-1">
     <div class="container">
-        <p>{$description}</p>
+        <p>{$description|raw}</p>
     </div>
 </div>
 
@@ -73,13 +75,16 @@
 
 
             <div class="bs-docs-section">
-                {foreach name="list" item="vol" key="key"}
+                {foreach name="list" item="vol" key="k1"}
                 <h1 id="{$vol.param}" class="page-header">{$vol.title}</h1>
                 <p class="lead"><code>{$vol.class}</code></p>
                 {foreach name="$vol.method" item="vo" key="k"}
-                <h3 id="#{$key}-{$k}-{$vo.name}">{$k+1}. {$vo.title}</h3>
-                <p>方法名: <code>{$vo.name}()</code></p>
+                <h3 id="{$k1}-{$k}-{$vo.name}">{$vo.title}</h3>
                 <div class="bs-callout bs-callout-info">
+                    <p>方法名: <code>{$vo.name}()</code></p>
+                    {if condition="isset($vo['route']['path'])"}
+                    <p>路由: <code>{$vo.route.path}({$vo.route.method|default=""})</code></p>
+                    {/if}
                     <p>{$vo.desc}</p>
                 </div>
 
@@ -99,11 +104,11 @@
                         <tbody>
                         {foreach name="$vo.params" item="v"}
                         <tr>
-                            <th scope="row">{$v.name}</th>
+                            <th scope="row">{$v.name|raw}</th>
                             <td class="text-success">{$v.type}</td>
-                            <td class="text-success">{$v.require}</td>
+                            <td class="text-success">{$v.required|raw}</td>
                             <td class="text-muted">{$v.default}</td>
-                            <td class="text-muted">{$v.desc}</td>
+                            <td class="text-muted">{$v.detail}</td>
                         </tr>
                         {/foreach}
                         </tbody>
@@ -125,9 +130,9 @@
                         <tbody>
                         {foreach name="$vo.returns" item="v"}
                         <tr>
-                            <th scope="row">{$v.name}</th>
+                            <th scope="row">{$v.name|raw}</th>
                             <td class="text-success">{$v.type}</td>
-                            <td class="text-success">{$v.required}</td>
+                            <td class="text-success">{$v.required|raw}</td>
                             <td class="text-muted">{$v.detail}</td>
                         </tr>
                         {/foreach}
